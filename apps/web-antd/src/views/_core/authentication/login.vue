@@ -37,7 +37,10 @@ const formSchema = computed((): VbenFormSchema[] => {
 
 // 处理表单提交
 const handleSubmit = async (values: any) => {
-  const { username, password } = values as { username: string; password: string };
+  const { username, password } = values as {
+    password: string;
+    username: string;
+  };
   await authStore.authLogin({ username, password });
 };
 </script>

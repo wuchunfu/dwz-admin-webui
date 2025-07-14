@@ -10,15 +10,15 @@ const routes: RouteRecordRaw[] = [
     name: 'ShortLink',
     path: '/shortlink',
     children: [
-      {
-        name: 'ShortOverview',
-        path: '/shortlink/overview',
-        component: () => import('#/views/shortlink/overview.vue'),
-        meta: {
-          icon: 'lucide:area-chart',
-          title: '概览',
-        },
-      },
+      // {
+      //   name: 'ShortOverview',
+      //   path: '/shortlink/overview',
+      //   component: () => import('#/views/shortlink/overview.vue'),
+      //   meta: {
+      //     icon: 'lucide:area-chart',
+      //     title: '概览',
+      //   },
+      // },
       {
         name: 'ShortLinkList',
         path: '/shortlink/list',

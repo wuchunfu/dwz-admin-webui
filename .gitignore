@@ -49,3 +49,5 @@ vite.config.ts.*
 *.sln
 *.sw?
 .history
+/apps/web-antd/dist/
+/apps/web-antd/node_modules/

@@ -1,0 +1,2 @@
+export * from "/Users/hepeichun/Code/cnb.cool/mliev/open/dwz-admin-webui/internal/tailwind-config/src/index.js";
+export { default } from "/Users/hepeichun/Code/cnb.cool/mliev/open/dwz-admin-webui/internal/tailwind-config/src/index.js";

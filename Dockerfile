@@ -23,7 +23,7 @@ RUN echo "Builder Success 🎉"
 FROM nginx:alpine
 
 # 复制构建产物到 nginx 的默认静态文件目录
-COPY --from=build /app/apps/web-antd/dist /usr/share/nginx/html/admin
+COPY --from=builder /app/apps/web-antd/dist /usr/share/nginx/html/admin
 
 # 创建一个简单的 nginx 配置来处理 SPA 路由
 RUN echo 'server { \

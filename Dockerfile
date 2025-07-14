@@ -15,7 +15,7 @@ RUN npm install -g pnpm && pnpm install
 COPY . .
 
 # 构建项目
-RUN pnpm build:antd
+RUN pnpm add -g cross-env && pnpm build:antd
 
 # 使用 nginx 作为基础镜像
 FROM nginx:alpine

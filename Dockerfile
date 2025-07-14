@@ -1,21 +1,23 @@
-# 使用 Node.js 作为基础镜像
-FROM node:alpine AS build
+FROM node:22-slim AS builder
 
-# 设置工作目录
+# --max-old-space-size
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV NODE_OPTIONS=--max-old-space-size=8192
+ENV TZ=Asia/Shanghai
+
+RUN npm i -g corepack
+
 WORKDIR /app
 
-# 复制 package.json 和 pnpm-lock.yaml
-COPY . .
+# copy package.json and pnpm-lock.yaml to workspace
+COPY . /app
 
-# 安装 pnpm
-# RUN npm config set registry https://registry.npmmirror.com && npm install -g pnpm && pnpm config set registry https://registry.npmmirror.com && pnpm install
-RUN npm install -g pnpm && pnpm install
+# 安装依赖
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm pnpm build:antd --filter=\!./docs
 
-# 复制项目文件
-COPY . .
-
-# 构建项目
-RUN pnpm add -g cross-env && pnpm build:antd
+RUN echo "Builder Success 🎉"
 
 # 使用 nginx 作为基础镜像
 FROM nginx:alpine

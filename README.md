@@ -3,7 +3,7 @@
 1. Get the project code
 
 ```bash
-git clone https://github.com/vbenjs/vue-vben-admin.git
+git clone https://cnb.cool/mliev/open/dwz-admin-webui.git
 ```
 
 2. Install dependencies

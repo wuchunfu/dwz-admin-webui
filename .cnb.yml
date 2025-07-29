@@ -28,7 +28,7 @@ develop:
         - name: antd build
           script: |
             npm i -g corepack
-            --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+            pnpm install --frozen-lockfile
             pnpm pnpm build:antd --filter=\!./docs
             echo "666 Builder Success 🎉"
         - name: docker login

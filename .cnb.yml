@@ -30,7 +30,7 @@ develop:
             npm i -g corepack
             --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
             pnpm pnpm build:antd --filter=\!./docs
-            echo "Builder Success 🎉"
+            echo "666 Builder Success 🎉"
         - name: docker login
           script:
             - docker login -u ${CNB_TOKEN_USER_NAME} -p "${CNB_TOKEN}" ${CNB_DOCKER_REGISTRY}

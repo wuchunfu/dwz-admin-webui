@@ -16,20 +16,28 @@ master:
           script: echo $NEW_TAG
 develop:
   push:
-    - services:
+    - docker:
+        # 自定义镜像作为开发环境
+        image: docker.cnb.cool/examples/workspace-images/workspace-node:22
+      runner:
+        tags: cnb:arch:amd64:containerd-snapshotter
+      services:
         # 流水线中启用 docker 服务
         - docker
       stages:
-        # 云原生构建自动构建Docker镜像并将它发布到制品库
+        - name: antd build
+          script: |
+            npm i -g corepack
+            pnpm install --frozen-lockfile
+            pnpm pnpm build:antd --filter=\!./docs
+            echo "666 Builder Success 🎉"
         - name: docker login
           script:
             - docker login -u ${CNB_TOKEN_USER_NAME} -p "${CNB_TOKEN}" ${CNB_DOCKER_REGISTRY}
-        - name: docker build
-          script:
-            - docker build -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH} .
-        - name: docker push
-          script:
-            - docker push ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH}
+        - name: docker build && push
+          script: |
+            docker buildx build --platform linux/amd64,linux/arm64 -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH} . --push
+            docker buildx build --platform linux/loong64 -f Dockerfile.loong64 -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_BRANCH}-loong64 . --push
 $:
   tag_push:
     - services:

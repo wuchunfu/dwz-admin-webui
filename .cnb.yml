@@ -50,7 +50,7 @@ $:
         tags: cnb:arch:amd64:containerd-snapshotter
       stages:
         # 云原生构建自动构建Docker镜像并将它发布到制品库
-        - name: antd build
+        - name: antd web build
           script: |
             npm i -g corepack
             pnpm install --frozen-lockfile

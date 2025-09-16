@@ -101,6 +101,10 @@ export interface UpdateDomainRequest {
   description?: string;
 }
 
+export interface UpdateStatusDomainRequest {
+  is_active?: boolean;
+}
+
 /**
  * 短网址管理API
  */
@@ -158,10 +162,10 @@ export namespace ShortLinkApi {
   // 预览短网址
   export function preview(code: string) {
     return requestClient.get<{
-      short_code: string;
       domain: string;
-      short_url: string;
       original_url: string;
+      short_code: string;
+      short_url: string;
     }>(`/preview/${code}`);
   }
 }
@@ -188,6 +192,11 @@ export namespace DomainApi {
   // 更新域名配置
   export function update(id: number, data: UpdateDomainRequest) {
     return requestClient.put<Domain>(`/api/v1/domains/${id}`, data);
+  }
+
+  // 更新域名状态
+  export function updateStatus(id: number, data: UpdateStatusDomainRequest) {
+    return requestClient.put<Domain>(`/api/v1/domains/${id}/status`, data);
   }
 
   // 删除域名配置

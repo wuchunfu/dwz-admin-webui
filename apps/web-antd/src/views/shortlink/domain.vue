@@ -158,7 +158,7 @@ const handleSubmit = async () => {
     }
 
     modalVisible.value = false;
-    loadData();
+    await loadData();
   } catch {
     message.error(isEdit.value ? '更新失败' : '创建失败');
   }
@@ -181,9 +181,9 @@ const handleDelete = async (record: Domain) => {
 
 const handleStatusChange = async (record: Domain, checked: boolean) => {
   try {
-    await DomainApi.update(record.id, { is_active: checked });
+    await DomainApi.updateStatus(record.id, { is_active: checked });
     message.success('状态更新成功');
-    loadData();
+    await loadData();
   } catch {
     message.error('状态更新失败');
   }

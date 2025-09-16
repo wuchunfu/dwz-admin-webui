@@ -1,9 +1,5 @@
 FROM node:22-slim AS builder
 
-# --max-old-space-size
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-ENV NODE_OPTIONS=--max-old-space-size=8192
 ENV TZ=Asia/Shanghai
 
 RUN npm i -g corepack
@@ -13,8 +9,9 @@ WORKDIR /app
 # copy package.json and pnpm-lock.yaml to workspace
 COPY . /app
 
-# 安装依赖
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+# 安装 pnpm
+RUN npm config set registry https://mirrors.cloud.tencent.com/npm/ && npm install -g pnpm && pnpm config set registry https://mirrors.cloud.tencent.com/npm/ && pnpm install
+
 RUN pnpm build:antd --filter=\!./docs
 
 RUN echo "Builder Success 🎉"

@@ -29,7 +29,7 @@ develop:
           script: |
             npm i -g corepack
             pnpm install --frozen-lockfile
-            pnpm pnpm build:antd --filter=\!./docs
+            pnpm build:antd --filter=\!./docs
             echo "666 Builder Success 🎉"
         - name: docker login
           script:
@@ -54,7 +54,7 @@ $:
           script: |
             npm i -g corepack
             pnpm install --frozen-lockfile
-            pnpm pnpm build:antd --filter=\!./docs
+            pnpm build:antd --filter=\!./docs
             echo "666 Builder Success 🎉"
         - name: docker login
           script:

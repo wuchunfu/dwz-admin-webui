@@ -51,5 +51,5 @@ vite.config.ts.*
 .history
 **/node_modules/
 /internal/node-utils/node_modules/
-/apps/web-antd/dist/
+apps/web-antd/dist/
 **/dist/

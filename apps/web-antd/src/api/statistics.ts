@@ -52,9 +52,7 @@ export namespace StatisticsApi {
   }
 
   // 获取用户统计
-  export function getUserStatistics(params?: {
-    days?: number;
-  }) {
+  export function getUserStatistics(params?: { days?: number }) {
     return requestClient.get('/api/v1/statistics/users', { params });
   }
 

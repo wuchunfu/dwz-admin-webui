@@ -56,8 +56,28 @@ export namespace StatisticsApi {
     return requestClient.get('/api/v1/statistics/users', { params });
   }
 
-  // 获取短链统计
-  export function getShortLinkStatistics(params?: { days?: number }) {
-    return requestClient.get('/api/v1/statistics/short-links', { params });
+  /**
+   * 获取短链统计列表
+   * @param params 请求参数
+   * @returns 带分页的短链统计数据
+   */
+  export function getShortLinkStatistics(params?: { 
+    days?: number;
+    page?: number;
+    page_size?: number;
+  }) {
+    return requestClient.get<{
+      list: Array<{
+        id: number;
+        short_url: string;
+        title?: string;
+        original_url: string;
+        click_count: number;
+        created_at: string;
+      }>;
+      total: number;
+      page: number;
+      page_size: number;
+    }>('/api/v1/statistics/short-links', { params });
   }
 }

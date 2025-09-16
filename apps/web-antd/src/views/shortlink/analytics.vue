@@ -124,12 +124,21 @@ const loadTopShortLinks = async () => {
 };
 
 const loadShortLinkStats = async () => {
+  loadingShortLinkStats.value = true;
   try {
     const days = Number(timeRange.value) || 30;
-    const stats = await StatisticsApi.getShortLinkStatistics({ days });
-    shortLinkStats.value = stats || [];
+    const result = await StatisticsApi.getShortLinkStatistics({
+      days,
+      page: shortLinkStatsCurrentPage.value,
+      page_size: shortLinkStatsPageSize.value
+    });
+
+    shortLinkStats.value = result.list || [];
+    shortLinkStatsTotal.value = result.total || 0;
   } catch {
     message.error('加载短链统计失败');
+  } finally {
+    loadingShortLinkStats.value = false;
   }
 };
 
@@ -176,6 +185,7 @@ const handleShortLinkChange = () => {
 
 const handleTimeRangeChange = () => {
   customDateRange.value = undefined;
+  shortLinkStatsCurrentPage.value = 1;
   loadStats();
   loadShortLinkStats();
 };
@@ -183,9 +193,18 @@ const handleTimeRangeChange = () => {
 const handleCustomDateChange = () => {
   if (customDateRange.value) {
     timeRange.value = '';
+    shortLinkStatsCurrentPage.value = 1;
     loadStats();
     loadShortLinkStats();
   }
+};
+
+const handleShortLinkStatsPageChange = (page: number, pageSize?: number) => {
+  shortLinkStatsCurrentPage.value = page;
+  if (pageSize) {
+    shortLinkStatsPageSize.value = pageSize;
+  }
+  loadShortLinkStats();
 };
 
 const disabledDate = (current: dayjs.Dayjs) => {
@@ -241,7 +260,7 @@ onMounted(() => {
   loadShortLinks();
   loadGlobalStats();
   loadTopShortLinks();
-  // loadShortLinkStats();
+  loadShortLinkStats();
 });
 </script>
 
@@ -583,13 +602,23 @@ onMounted(() => {
         <!-- 短链统计数据 -->
         <div>
           <h4 class="mb-4 text-lg font-medium">短链统计数据</h4>
-          <Table
-            :columns="shortLinkStatsColumns"
-            :data-source="shortLinkStats || []"
-            :pagination="false"
-            size="small"
-            :scroll="{ y: 300 }"
-          />
+          <Spin :spinning="loadingShortLinkStats">
+            <Table
+              :columns="shortLinkStatsColumns"
+              :data-source="shortLinkStats || []"
+              :pagination="{
+                current: shortLinkStatsCurrentPage,
+                pageSize: shortLinkStatsPageSize,
+                total: shortLinkStatsTotal,
+                showSizeChanger: true,
+                showTotal: (total) => `共 ${total} 条`,
+                onChange: handleShortLinkStatsPageChange,
+                onShowSizeChange: handleShortLinkStatsPageChange
+              }"
+              size="small"
+              :scroll="{ y: 300 }"
+            />
+          </Spin>
         </div>
       </div>
     </Card>

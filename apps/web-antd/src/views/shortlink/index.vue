@@ -660,8 +660,4 @@ onMounted(() => {
   </Page>
 </template>
 
-<style scoped>
-.ant-table-wrapper {
-  @apply rounded-md bg-white shadow-sm;
-}
-</style>
+<style scoped></style>

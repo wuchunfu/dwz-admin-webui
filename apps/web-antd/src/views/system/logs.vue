@@ -214,20 +214,20 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { 
-  message, 
-  Card, 
-  Button, 
-  Input, 
-  Select, 
-  SelectOption, 
-  DatePicker, 
-  Table, 
-  Modal, 
-  Tag, 
+import {
+  message,
+  Card,
+  Button,
+  Input,
+  Select,
+  SelectOption,
+  DatePicker,
+  Table,
+  Modal,
+  Tag,
   Descriptions,
   DescriptionsItem,
-  Space 
+  Space
 } from 'ant-design-vue';
 import { Page } from '@vben/common-ui';
 import dayjs from 'dayjs';
@@ -432,12 +432,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.ant-table-wrapper {
-  @apply bg-white rounded-md shadow-sm;
-}
-
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-</style> 
+</style>

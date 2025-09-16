@@ -33,6 +33,7 @@ interface TopShortLink {
 // 响应式数据
 const loading = ref(false);
 const loadingTopLinks = ref(false);
+const loadingShortLinkStats = ref(false);
 const shortLinks = ref<ShortLink[]>([]);
 const topShortLinks = ref<TopShortLink[]>([]);
 const selectedShortLink = ref<number | undefined>();
@@ -41,6 +42,9 @@ const customDateRange = ref<[dayjs.Dayjs, dayjs.Dayjs] | undefined>();
 const currentStats = ref<null | ShortLinkStatistics>(null);
 const globalStats = ref<null | SystemStatistics>(null);
 const shortLinkStats = ref<any[]>([]);
+const shortLinkStatsTotal = ref(0);
+const shortLinkStatsCurrentPage = ref(1);
+const shortLinkStatsPageSize = ref(10);
 
 // 每日统计表格列
 const dailyStatsColumns = [
@@ -234,9 +238,9 @@ const renderClickTrendChart = () => {
 
 // 生命周期
 onMounted(() => {
-  // loadShortLinks();
-  // loadGlobalStats();
-  // loadTopShortLinks();
+  loadShortLinks();
+  loadGlobalStats();
+  loadTopShortLinks();
   // loadShortLinkStats();
 });
 </script>
@@ -286,7 +290,7 @@ onMounted(() => {
     <!-- 全局统计卡片 -->
     <Card class="mb-6" title="全局统计概览">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-blue-100 p-2">
               <svg
@@ -312,7 +316,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-green-100 p-2">
               <svg
@@ -338,7 +342,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-orange-100 p-2">
               <svg
@@ -364,7 +368,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-purple-100 p-2">
               <svg
@@ -398,7 +402,7 @@ onMounted(() => {
         <p>请选择一个短网址查看详细统计数据</p>
       </div>
       <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-blue-100 p-2">
               <svg
@@ -424,7 +428,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-green-100 p-2">
               <svg
@@ -450,7 +454,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-orange-100 p-2">
               <svg
@@ -476,7 +480,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="rounded-lg border bg-white p-6 shadow-sm">
+        <div class="rounded-lg border p-6 shadow-sm">
           <div class="flex items-center">
             <div class="rounded-lg bg-purple-100 p-2">
               <svg
@@ -593,10 +597,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.ant-table-wrapper {
-  @apply rounded-md bg-white shadow-sm;
-}
-
 #clickTrendChart {
   min-height: 200px;
 }

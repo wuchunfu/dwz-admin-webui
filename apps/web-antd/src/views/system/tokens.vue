@@ -14,7 +14,7 @@
               <Search class="h-4 w-4" />
             </template>
           </Input>
-          
+
           <Select
             v-model:value="searchParams.status"
             placeholder="选择状态"
@@ -24,16 +24,16 @@
             <SelectOption :value="1">启用</SelectOption>
             <SelectOption :value="0">禁用</SelectOption>
           </Select>
-          
+
           <Button type="primary" @click="handleSearch" :loading="loading">
             搜索
           </Button>
-          
+
           <Button @click="handleReset">
             重置
           </Button>
         </div>
-        
+
         <Button type="primary" @click="handleOpenCreateModal">
           <Plus class="h-4 w-4 mr-1" />
           创建Token
@@ -67,27 +67,27 @@
               </Button>
             </div>
           </template>
-          
+
           <template v-else-if="column.key === 'status'">
             <Tag :color="record.status === 1 ? 'green' : 'red'">
               {{ record.status === 1 ? '启用' : '禁用' }}
             </Tag>
           </template>
-          
+
           <template v-else-if="column.key === 'expire_at'">
             <span v-if="record.expire_at">
               {{ formatDate(record.expire_at) }}
             </span>
             <span v-else class="text-gray-500">永不过期</span>
           </template>
-          
+
           <template v-else-if="column.key === 'last_used_at'">
             <span v-if="record.last_used_at">
               {{ formatDate(record.last_used_at) }}
             </span>
             <span v-else class="text-gray-500">从未使用</span>
           </template>
-          
+
           <template v-else-if="column.key === 'actions'">
             <Popconfirm
               title="确定要删除这个Token吗？"
@@ -126,7 +126,7 @@
             :maxlength="100"
           />
         </FormItem>
-        
+
         <FormItem label="过期时间" name="expire_at">
           <DatePicker
             v-model:value="createForm.expire_at"
@@ -182,21 +182,21 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { 
-  message, 
-  Card, 
-  Button, 
-  Input, 
-  Select, 
-  SelectOption, 
-  Form, 
-  FormItem, 
-  DatePicker, 
-  Table, 
-  Tag, 
-  Modal, 
+import {
+  message,
+  Card,
+  Button,
+  Input,
+  Select,
+  SelectOption,
+  Form,
+  FormItem,
+  DatePicker,
+  Table,
+  Tag,
+  Modal,
   Popconfirm,
-  Space 
+  Space
 } from 'ant-design-vue';
 import { Page } from '@vben/common-ui';
 import { Search, Plus, Copy, CircleCheckBig } from '@vben/icons';
@@ -301,9 +301,9 @@ const loadTokens = async () => {
       token_name: searchParams.token_name || undefined,
       status: searchParams.status,
     };
-    
+
     const response = await TokenApi.getList(params);
-    
+
     dataSource.value = response.list;
     paginationConfig.total = response.total;
     paginationConfig.current = response.page;
@@ -341,19 +341,19 @@ const handleCreate = async () => {
   try {
     await createFormRef.value.validate();
     createLoading.value = true;
-    
+
     const requestData: CreateTokenRequest = {
       token_name: createForm.token_name,
       expire_at: createForm.expire_at ? dayjs(createForm.expire_at).toISOString() : undefined,
     };
-    
+
     const response = await TokenApi.create(requestData);
-    
+
     message.success('Token创建成功');
     newToken.value = response.token || '';
     createModalVisible.value = false;
     successModalVisible.value = true;
-    
+
     // 刷新列表
     loadTokens();
   } catch (error: any) {
@@ -437,11 +437,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.ant-table-wrapper {
-  @apply bg-white rounded-md shadow-sm;
-}
-
 code {
   @apply font-mono;
 }
-</style> 
+</style>

@@ -57,9 +57,7 @@ export namespace StatisticsApi {
   }
 
   // 获取短链统计
-  export function getShortLinkStatistics(params?: {
-    days?: number;
-  }) {
+  export function getShortLinkStatistics(params?: { days?: number }) {
     return requestClient.get('/api/v1/statistics/short-links', { params });
   }
 }

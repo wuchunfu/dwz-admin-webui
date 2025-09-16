@@ -25,12 +25,6 @@ develop:
         # 流水线中启用 docker 服务
         - docker
       stages:
-        - name: antd build
-          script: |
-            npm i -g corepack
-            pnpm install --frozen-lockfile
-            pnpm build:antd --filter=\!./docs
-            echo "666 Builder Success 🎉"
         - name: docker login
           script:
             - docker login -u ${CNB_TOKEN_USER_NAME} -p "${CNB_TOKEN}" ${CNB_DOCKER_REGISTRY}
@@ -49,13 +43,6 @@ $:
       runner:
         tags: cnb:arch:amd64:containerd-snapshotter
       stages:
-        # 云原生构建自动构建Docker镜像并将它发布到制品库
-        - name: antd web build
-          script: |
-            npm i -g corepack
-            pnpm install --frozen-lockfile
-            pnpm build:antd --filter=\!./docs
-            echo "666 Builder Success 🎉"
         - name: docker login
           script:
             - docker login -u ${CNB_TOKEN_USER_NAME} -p "${CNB_TOKEN}" ${CNB_DOCKER_REGISTRY}

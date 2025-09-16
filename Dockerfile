@@ -15,7 +15,7 @@ COPY . /app
 
 # 安装依赖
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm pnpm build:antd --filter=\!./docs
+RUN pnpm build:antd --filter=\!./docs
 
 RUN echo "Builder Success 🎉"
 

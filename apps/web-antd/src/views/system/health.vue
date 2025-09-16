@@ -42,6 +42,7 @@ const healthResponse = ref<HealthStatus | null>(null);
 const healthStatus = ref({
   status: 'unknown',
   database: 'unknown',
+  database_driver: 'unknown',
   redis: 'unknown',
   timestamp: '',
 });
@@ -65,6 +66,7 @@ const checkHealth = async () => {
     healthStatus.value = {
       status: response.status || 'unknown',
       database: response.services?.database?.status || 'unknown',
+      database_driver: response.services?.database_driver || 'unknown',
       redis: response.services?.redis?.status || 'unknown',
       timestamp: timestampStr,
     };
@@ -220,7 +222,7 @@ const getResponseTimeStatus = (time: number) => {
 
 const getStatusText = (
   status: string,
-  type: 'database' | 'redis' | 'system',
+  type: 'database' | 'database_driver' | 'redis' | 'system',
 ) => {
   if (type === 'system') {
     switch (status) {
@@ -234,6 +236,24 @@ const getStatusText = (
       }
       case 'warning': {
         return '警告';
+      }
+      default: {
+        return '未知';
+      }
+    }
+  } else if (type === 'database_driver'){
+    switch (status) {
+      case 'mariadb': {
+        return 'MariaDB';
+      }
+      case 'mysql': {
+        return 'MySQL';
+      }
+      case 'postgresql': {
+        return 'PostgreSQL';
+      }
+      case 'sqlite': {
+        return 'SQLite';
       }
       default: {
         return '未知';
@@ -299,7 +319,9 @@ onUnmounted(() => {
             {{ getStatusText(healthStatus.database, 'database') }}
           </div>
           <div class="text-sm text-gray-500">数据库</div>
-          <div class="mt-1 text-xs text-gray-400">MySQL</div>
+          <div class="mt-1 text-xs text-gray-400">
+            {{ getStatusText(healthStatus.database_driver, 'database_driver') }}
+          </div>
         </div>
         <div class="rounded-lg border p-4 text-center">
           <div

@@ -1,2 +1,0 @@
-export * from "/Users/hepeichun/Code/cnb.cool/mliev/open/dwz-admin-webui/scripts/vsh/src/index.js";
-export { default } from "/Users/hepeichun/Code/cnb.cool/mliev/open/dwz-admin-webui/scripts/vsh/src/index.js";

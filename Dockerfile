@@ -10,9 +10,7 @@ WORKDIR /app
 COPY . /app
 
 # 安装 pnpm
-RUN npm config set registry https://mirrors.cloud.tencent.com/npm/ && npm install -g pnpm && pnpm config set registry https://mirrors.cloud.tencent.com/npm/ && pnpm install
-
-RUN pnpm build:antd --filter=\!./docs
+RUN pnpm config set registry https://mirrors.cloud.tencent.com/npm/ && pnpm install && pnpm build:antd --filter=\!./docs
 
 RUN echo "Builder Success 🎉"
 

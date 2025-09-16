@@ -60,8 +60,18 @@ function defineApplicationConfig(userConfigPromise?: DefineApplicationOptions) {
       build: {
         rollupOptions: {
           output: {
-            assetFileNames: '[ext]/[name]-[hash].[ext]',
-            chunkFileNames: 'js/[name]-[hash].js',
+            assetFileNames: (assetInfo) => {
+              const name = assetInfo.name || '';
+              // Remove underscore prefix from file names
+              const fileName = name.startsWith('_') ? name.substring(1) : name;
+              return '[ext]/' + fileName + '-[hash].[ext]';
+            },
+            chunkFileNames: (chunkInfo) => {
+              const name = chunkInfo.name || '';
+              // Remove underscore prefix from chunk names
+              const fileName = name.startsWith('_') ? name.substring(1) : name;
+              return 'js/' + fileName + '-[hash].js';
+            },
             entryFileNames: 'jse/index-[name]-[hash].js',
           },
         },

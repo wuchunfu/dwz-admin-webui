@@ -178,21 +178,21 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { 
-  message, 
-  Card, 
-  Button, 
-  Input, 
-  Select, 
-  SelectOption, 
-  Form, 
-  FormItem, 
-  Table, 
-  Modal, 
+import {
+  message,
+  Card,
+  Button,
+  Input,
+  Select,
+  SelectOption,
+  Form,
+  FormItem,
+  Table,
+  Modal,
   Popconfirm,
   Switch,
   InputPassword,
-  Space 
+  Space
 } from 'ant-design-vue';
 import { Page } from '@vben/common-ui';
 import dayjs from 'dayjs';
@@ -406,7 +406,7 @@ const handleSubmit = async () => {
       ...formData,
       status: formData.status ? 1 : 0,
     };
-    
+
     if (isEdit.value && currentRecord.value) {
       const { username, password, ...updateData } = data;
       await UserManagementApi.update(currentRecord.value.id, updateData);
@@ -415,7 +415,7 @@ const handleSubmit = async () => {
       await UserManagementApi.create(data);
       message.success('用户创建成功');
     }
-    
+
     modalVisible.value = false;
     loadData();
   } catch (error: any) {
@@ -510,8 +510,4 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-.ant-table-wrapper {
-  @apply bg-white rounded-md shadow-sm;
-}
-</style> 
+<style scoped></style>

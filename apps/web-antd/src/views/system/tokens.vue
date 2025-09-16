@@ -1,210 +1,32 @@
-<template>
-  <Page description="管理API Token，包括创建、查看和删除Token等功能" title="API Token管理">
-    <!-- 搜索和操作区域 -->
-    <Card title="搜索筛选" class="mb-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <Input
-            v-model:value="searchParams.token_name"
-            placeholder="请输入Token名称"
-            style="width: 200px"
-            @pressEnter="handleSearch"
-          >
-            <template #prefix>
-              <Search class="h-4 w-4" />
-            </template>
-          </Input>
-
-          <Select
-            v-model:value="searchParams.status"
-            placeholder="选择状态"
-            style="width: 120px"
-            allow-clear
-          >
-            <SelectOption :value="1">启用</SelectOption>
-            <SelectOption :value="0">禁用</SelectOption>
-          </Select>
-
-          <Button type="primary" @click="handleSearch" :loading="loading">
-            搜索
-          </Button>
-
-          <Button @click="handleReset">
-            重置
-          </Button>
-        </div>
-
-        <Button type="primary" @click="handleOpenCreateModal">
-          <Plus class="h-4 w-4 mr-1" />
-          创建Token
-        </Button>
-      </div>
-    </Card>
-
-
-
-    <!-- 表格列表区域 -->
-    <Card title="Token列表">
-      <Table
-        :columns="columns"
-        :data-source="dataSource"
-        :loading="loading"
-        :pagination="paginationConfig"
-        row-key="id"
-        @change="handleTableChange"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'token'">
-            <div class="flex items-center space-x-2">
-              <code class="text-xs bg-gray-100 px-2 py-1 rounded">{{ maskToken(record.token) }}</code>
-              <Button
-                v-if="record.token"
-                size="small"
-                type="link"
-                @click="copyToClipboard(record.token)"
-              >
-                <Copy class="h-4 w-4" />
-              </Button>
-            </div>
-          </template>
-
-          <template v-else-if="column.key === 'status'">
-            <Tag :color="record.status === 1 ? 'green' : 'red'">
-              {{ record.status === 1 ? '启用' : '禁用' }}
-            </Tag>
-          </template>
-
-          <template v-else-if="column.key === 'expire_at'">
-            <span v-if="record.expire_at">
-              {{ formatDate(record.expire_at) }}
-            </span>
-            <span v-else class="text-gray-500">永不过期</span>
-          </template>
-
-          <template v-else-if="column.key === 'last_used_at'">
-            <span v-if="record.last_used_at">
-              {{ formatDate(record.last_used_at) }}
-            </span>
-            <span v-else class="text-gray-500">从未使用</span>
-          </template>
-
-          <template v-else-if="column.key === 'actions'">
-            <Popconfirm
-              title="确定要删除这个Token吗？"
-              ok-text="确定"
-              cancel-text="取消"
-              @confirm="handleDelete(record as Token)"
-            >
-              <Button size="small" type="link" danger>
-                删除
-              </Button>
-            </Popconfirm>
-          </template>
-        </template>
-      </Table>
-    </Card>
-
-    <!-- 创建Token弹窗 -->
-    <Modal
-      v-model:open="createModalVisible"
-      title="创建API Token"
-      width="500px"
-      @ok="handleCreate"
-      @cancel="handleCreateCancel"
-      :confirm-loading="createLoading"
-    >
-      <Form
-        ref="createFormRef"
-        :model="createForm"
-        :rules="createRules"
-        layout="vertical"
-      >
-        <FormItem label="Token名称" name="token_name">
-          <Input
-            v-model:value="createForm.token_name"
-            placeholder="请输入Token名称"
-            :maxlength="100"
-          />
-        </FormItem>
-
-        <FormItem label="过期时间" name="expire_at">
-          <DatePicker
-            v-model:value="createForm.expire_at"
-            show-time
-            placeholder="选择过期时间，留空则永不过期"
-            style="width: 100%"
-            :disabled-date="disabledDate"
-          />
-        </FormItem>
-      </Form>
-    </Modal>
-
-    <!-- Token创建成功弹窗 -->
-    <Modal
-      v-model:open="successModalVisible"
-      title="Token创建成功"
-      width="600px"
-      :footer="null"
-      :mask-closable="false"
-      :closable="false"
-    >
-      <div class="text-center">
-        <div class="mb-4">
-          <CircleCheckBig class="text-4xl text-green-500 mx-auto" />
-        </div>
-        <h3 class="text-lg font-semibold mb-4">Token创建成功！</h3>
-        <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
-          <p class="text-yellow-800 text-sm">
-            <strong>重要提示：</strong>
-            请立即复制并保存您的Token，离开此页面后将无法再次查看完整Token！
-          </p>
-        </div>
-        <div class="mb-4">
-          <div class="p-3 bg-gray-50 rounded border">
-            <div class="flex items-center justify-between">
-              <code class="text-sm flex-1 mr-2 break-all font-mono">{{ newToken }}</code>
-              <Button type="primary" @click="copyToClipboard(newToken)">
-                <Copy class="h-4 w-4 mr-1" />
-                复制
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-center">
-          <Button type="primary" @click="closeSuccessModal">
-            我已保存
-          </Button>
-        </div>
-      </div>
-    </Modal>
-  </Page>
-</template>
-
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import {
-  message,
-  Card,
-  Button,
-  Input,
-  Select,
-  SelectOption,
-  Form,
-  FormItem,
-  DatePicker,
-  Table,
-  Tag,
-  Modal,
-  Popconfirm,
-  Space
-} from 'ant-design-vue';
-import { Page } from '@vben/common-ui';
-import { Search, Plus, Copy, CircleCheckBig } from '@vben/icons';
-import dayjs, { type Dayjs } from 'dayjs';
-import { TokenApi } from '#/api';
+import type { Dayjs } from 'dayjs';
 
 // 使用 API 定义的类型
-import type { Token, CreateTokenRequest, TokenListResponse } from '#/api';
+import type { CreateTokenRequest, Token } from '#/api';
+
+import { onMounted, reactive, ref } from 'vue';
+
+import { Page } from '@vben/common-ui';
+import { CircleCheckBig, Copy, Plus, Search } from '@vben/icons';
+
+import {
+  Button,
+  Card,
+  DatePicker,
+  Form,
+  FormItem,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Select,
+  SelectOption,
+  Table,
+  Tag,
+} from 'ant-design-vue';
+import dayjs from 'dayjs';
+
+import { TokenApi } from '#/api';
 
 // 响应式数据
 const loading = ref(false);
@@ -344,7 +166,9 @@ const handleCreate = async () => {
 
     const requestData: CreateTokenRequest = {
       token_name: createForm.token_name,
-      expire_at: createForm.expire_at ? dayjs(createForm.expire_at).toISOString() : undefined,
+      expire_at: createForm.expire_at
+        ? dayjs(createForm.expire_at).toISOString()
+        : undefined,
     };
 
     const response = await TokenApi.create(requestData);
@@ -422,7 +246,7 @@ const disabledDate = (current: Dayjs) => {
 const maskToken = (token?: string) => {
   if (!token) return '***';
   if (token.length <= 12) return token;
-  return token.substring(0, 8) + '...' + token.substring(token.length - 4);
+  return `${token.slice(0, 8)}...${token.slice(Math.max(0, token.length - 4))}`;
 };
 
 // 格式化日期
@@ -435,6 +259,187 @@ onMounted(() => {
   loadTokens();
 });
 </script>
+
+<template>
+  <Page
+    description="管理API Token，包括创建、查看和删除Token等功能"
+    title="API Token管理"
+  >
+    <!-- 搜索和操作区域 -->
+    <Card title="搜索筛选" class="mb-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <Input
+            v-model:value="searchParams.token_name"
+            placeholder="请输入Token名称"
+            style="width: 200px"
+            @press-enter="handleSearch"
+          >
+            <template #prefix>
+              <Search class="h-4 w-4" />
+            </template>
+          </Input>
+
+          <Select
+            v-model:value="searchParams.status"
+            placeholder="选择状态"
+            style="width: 120px"
+            allow-clear
+          >
+            <SelectOption :value="1">启用</SelectOption>
+            <SelectOption :value="0">禁用</SelectOption>
+          </Select>
+
+          <Button type="primary" @click="handleSearch" :loading="loading">
+            搜索
+          </Button>
+
+          <Button @click="handleReset"> 重置 </Button>
+        </div>
+
+        <Button type="primary" @click="handleOpenCreateModal">
+          <Plus class="mr-1 h-4 w-4" />
+          创建Token
+        </Button>
+      </div>
+    </Card>
+
+    <!-- 表格列表区域 -->
+    <Card title="Token列表">
+      <Table
+        :columns="columns"
+        :data-source="dataSource"
+        :loading="loading"
+        :pagination="paginationConfig"
+        row-key="id"
+        @change="handleTableChange"
+      >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'token'">
+            <div class="flex items-center space-x-2">
+              <code class="rounded bg-gray-100 px-2 py-1 text-xs">{{
+                maskToken(record.token)
+              }}</code>
+              <Button
+                v-if="record.token"
+                size="small"
+                type="link"
+                @click="copyToClipboard(record.token)"
+              >
+                <Copy class="h-4 w-4" />
+              </Button>
+            </div>
+          </template>
+
+          <template v-else-if="column.key === 'status'">
+            <Tag :color="record.status === 1 ? 'green' : 'red'">
+              {{ record.status === 1 ? '启用' : '禁用' }}
+            </Tag>
+          </template>
+
+          <template v-else-if="column.key === 'expire_at'">
+            <span v-if="record.expire_at">
+              {{ formatDate(record.expire_at) }}
+            </span>
+            <span v-else class="text-gray-500">永不过期</span>
+          </template>
+
+          <template v-else-if="column.key === 'last_used_at'">
+            <span v-if="record.last_used_at">
+              {{ formatDate(record.last_used_at) }}
+            </span>
+            <span v-else class="text-gray-500">从未使用</span>
+          </template>
+
+          <template v-else-if="column.key === 'actions'">
+            <Popconfirm
+              title="确定要删除这个Token吗？"
+              ok-text="确定"
+              cancel-text="取消"
+              @confirm="handleDelete(record as Token)"
+            >
+              <Button size="small" type="link" danger> 删除 </Button>
+            </Popconfirm>
+          </template>
+        </template>
+      </Table>
+    </Card>
+
+    <!-- 创建Token弹窗 -->
+    <Modal
+      v-model:open="createModalVisible"
+      title="创建API Token"
+      width="500px"
+      @ok="handleCreate"
+      @cancel="handleCreateCancel"
+      :confirm-loading="createLoading"
+    >
+      <Form
+        ref="createFormRef"
+        :model="createForm"
+        :rules="createRules"
+        layout="vertical"
+      >
+        <FormItem label="Token名称" name="token_name">
+          <Input
+            v-model:value="createForm.token_name"
+            placeholder="请输入Token名称"
+            :maxlength="100"
+          />
+        </FormItem>
+
+        <FormItem label="过期时间" name="expire_at">
+          <DatePicker
+            v-model:value="createForm.expire_at"
+            show-time
+            placeholder="选择过期时间，留空则永不过期"
+            style="width: 100%"
+            :disabled-date="disabledDate"
+          />
+        </FormItem>
+      </Form>
+    </Modal>
+
+    <!-- Token创建成功弹窗 -->
+    <Modal
+      v-model:open="successModalVisible"
+      title="Token创建成功"
+      width="600px"
+      :footer="null"
+      :mask-closable="false"
+      :closable="false"
+    >
+      <div class="text-center">
+        <div class="mb-4">
+          <CircleCheckBig class="mx-auto text-4xl text-green-500" />
+        </div>
+        <h3 class="mb-4 text-lg font-semibold">Token创建成功！</h3>
+        <div class="mb-4 rounded border border-yellow-200 bg-yellow-50 p-4">
+          <p class="text-sm text-yellow-800">
+            <strong>重要提示：</strong>
+            请立即复制并保存您的Token，离开此页面后将无法再次查看完整Token！
+          </p>
+        </div>
+        <div class="mb-4">
+          <div class="rounded border bg-gray-50 p-3">
+            <div class="flex items-center justify-between">
+              <code class="mr-2 flex-1 break-all font-mono text-sm">{{
+                newToken
+              }}</code>
+              <Button type="primary" @click="copyToClipboard(newToken)">
+                <Copy class="mr-1 h-4 w-4" />
+                复制
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <Button type="primary" @click="closeSuccessModal"> 我已保存 </Button>
+        </div>
+      </div>
+    </Modal>
+  </Page>
+</template>
 
 <style scoped>
 code {

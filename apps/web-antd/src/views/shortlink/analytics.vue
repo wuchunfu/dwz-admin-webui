@@ -130,7 +130,7 @@ const loadShortLinkStats = async () => {
     const result = await StatisticsApi.getShortLinkStatistics({
       days,
       page: shortLinkStatsCurrentPage.value,
-      page_size: shortLinkStatsPageSize.value
+      page_size: shortLinkStatsPageSize.value,
     });
 
     shortLinkStats.value = result.list || [];
@@ -236,14 +236,14 @@ const renderClickTrendChart = () => {
           .map(
             (item, index) => `
           <div class="flex-1 flex flex-col items-center group">
-            <div class="bg-blue-500 w-full rounded-t hover:bg-blue-600 transition-colors cursor-pointer"
+            <div class="bg-blue-500 dark:bg-blue-600 w-full rounded-t hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors cursor-pointer"
                  style="height: ${maxCount > 0 ? (item.click_count / maxCount) * 180 : 0}px; min-height: 2px;"
                  title="日期: ${item.date}, 点击数: ${item.click_count}">
             </div>
-            <div class="text-xs text-gray-500 mt-1 transform rotate-45 origin-bottom-left">
+            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 transform rotate-45 origin-bottom-left">
               ${item.date ? item.date.slice(5) : `第${index + 1}天`}
             </div>
-            <div class="text-xs text-gray-700 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="text-xs text-gray-700 dark:text-gray-300 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
               ${item.click_count}
             </div>
           </div>
@@ -309,11 +309,13 @@ onMounted(() => {
     <!-- 全局统计卡片 -->
     <Card class="mb-6" title="全局统计概览">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-blue-100 p-2">
+            <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
               <svg
-                class="h-6 w-6 text-blue-600"
+                class="h-6 w-6 text-blue-600 dark:text-blue-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -327,19 +329,23 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">总短链数</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                总短链数
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ globalStats?.total_short_links || 0 }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-green-100 p-2">
+            <div class="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
               <svg
-                class="h-6 w-6 text-green-600"
+                class="h-6 w-6 text-green-600 dark:text-green-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -353,19 +359,23 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">全站总点击</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                全站总点击
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ globalStats?.total_clicks || 0 }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-orange-100 p-2">
+            <div class="rounded-lg bg-orange-100 p-2 dark:bg-orange-900/30">
               <svg
-                class="h-6 w-6 text-orange-600"
+                class="h-6 w-6 text-orange-600 dark:text-orange-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -379,19 +389,23 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">今日点击</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                今日点击
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ globalStats?.today_clicks || 0 }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-purple-100 p-2">
+            <div class="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
               <svg
-                class="h-6 w-6 text-purple-600"
+                class="h-6 w-6 text-purple-600 dark:text-purple-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -405,8 +419,10 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">本月点击</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                本月点击
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ globalStats?.month_clicks || 0 }}
               </p>
             </div>
@@ -417,15 +433,20 @@ onMounted(() => {
 
     <!-- 选中短网址统计卡片 -->
     <Card class="mb-6" title="单个短网址统计">
-      <div v-if="!selectedShortLink" class="py-8 text-center text-gray-500">
+      <div
+        v-if="!selectedShortLink"
+        class="py-8 text-center text-gray-500 dark:text-gray-400"
+      >
         <p>请选择一个短网址查看详细统计数据</p>
       </div>
       <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-blue-100 p-2">
+            <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
               <svg
-                class="h-6 w-6 text-blue-600"
+                class="h-6 w-6 text-blue-600 dark:text-blue-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -439,19 +460,23 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">总点击数</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                总点击数
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ currentStats?.total_clicks || 0 }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-green-100 p-2">
+            <div class="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
               <svg
-                class="h-6 w-6 text-green-600"
+                class="h-6 w-6 text-green-600 dark:text-green-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -465,19 +490,23 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">今日点击</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                今日点击
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ currentStats?.today_clicks || 0 }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-orange-100 p-2">
+            <div class="rounded-lg bg-orange-100 p-2 dark:bg-orange-900/30">
               <svg
-                class="h-6 w-6 text-orange-600"
+                class="h-6 w-6 text-orange-600 dark:text-orange-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -491,19 +520,23 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">本周点击</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                本周点击
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ currentStats?.week_clicks || 0 }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="rounded-lg border p-6 shadow-sm">
+        <div
+          class="rounded-lg border border-gray-200 p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/30"
+        >
           <div class="flex items-center">
-            <div class="rounded-lg bg-purple-100 p-2">
+            <div class="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
               <svg
-                class="h-6 w-6 text-purple-600"
+                class="h-6 w-6 text-purple-600 dark:text-purple-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -517,8 +550,10 @@ onMounted(() => {
               </svg>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-500">本月点击</p>
-              <p class="text-2xl font-bold text-gray-900">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                本月点击
+              </p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {{ currentStats?.month_clicks || 0 }}
               </p>
             </div>
@@ -553,30 +588,35 @@ onMounted(() => {
             <div
               v-for="(item, index) in topShortLinks"
               :key="item.id"
-              class="flex items-center justify-between rounded bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+              class="flex items-center justify-between rounded bg-blue-500/10 p-3 transition-colors hover:bg-blue-500/20 dark:bg-blue-500/20 dark:hover:bg-blue-500/30"
             >
               <div class="flex items-center">
                 <div
-                  class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100"
+                  class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30"
                 >
-                  <span class="text-sm font-medium text-blue-800">{{
-                    index + 1
-                  }}</span>
+                  <span
+                    class="text-sm font-medium text-blue-800 dark:text-blue-300"
+                    >{{ index + 1 }}</span
+                  >
                 </div>
                 <div class="ml-3">
-                  <p class="text-sm font-medium text-gray-900">
+                  <p
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                  >
                     {{ item.short_url }}
                   </p>
-                  <p class="max-w-xs truncate text-sm text-gray-500">
+                  <p
+                    class="max-w-xs truncate text-sm text-gray-500 dark:text-gray-400"
+                  >
                     {{ item.title || item.original_url }}
                   </p>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-sm font-medium text-gray-900">
+                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {{ item.click_count }}
                 </p>
-                <p class="text-xs text-gray-500">点击</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">点击</p>
               </div>
             </div>
           </div>
@@ -613,7 +653,7 @@ onMounted(() => {
                 showSizeChanger: true,
                 showTotal: (total) => `共 ${total} 条`,
                 onChange: handleShortLinkStatsPageChange,
-                onShowSizeChange: handleShortLinkStatsPageChange
+                onShowSizeChange: handleShortLinkStatsPageChange,
               }"
               size="small"
               :scroll="{ y: 300 }"
@@ -631,10 +671,10 @@ onMounted(() => {
 }
 
 .ant-card {
-  @apply border border-gray-200 shadow-sm;
+  @apply border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800/30;
 }
 
 .ant-card-head-title {
-  @apply font-semibold text-gray-800;
+  @apply font-semibold text-gray-800 dark:text-gray-200;
 }
 </style>

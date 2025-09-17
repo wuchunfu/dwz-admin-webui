@@ -10,6 +10,7 @@ export interface HealthStatus {
     database: {
       status: string;
     };
+    database_driver: string;
     redis: {
       status: string;
     };
@@ -33,4 +34,4 @@ export namespace HealthApi {
   export function getSimpleHealth() {
     return requestClient.get<SimpleHealthStatus>('/health/simple');
   }
-} 
+}
